@@ -1,7 +1,14 @@
 import os
+import time
 import json
 import streamlit as st
 import pandas as pd
+
+import rerun
+
+from threading import Thread
+
+from backend import check_alert_status
 from alarms import ExchangeClass, get_exchanges
 
 
@@ -11,9 +18,9 @@ def choose_pair(exchange):
     pair = st.sidebar.selectbox("Choose a Pair", symbols)
     return pair 
 
-def get_alert_params(pair, current_price):    
+def get_alert_params(pair):    
     with st.sidebar.form(key ='Form1'):
-        alert_price =  st.number_input("Enter alert price:", value=current_price)
+        alert_price =  st.number_input(f"Enter alert price:")
         when = st.selectbox("Show alarm when the price is:",['above', 'below'])
         always = st.checkbox('always')
         add_alert_button = st.form_submit_button(label = f'Add alert for {pair}')
@@ -42,6 +49,7 @@ def create_alerts(exchange_id, pair, alert_price, when, always, alerts=None):
 def get_df(alerts):
     exchange_list = []
     pair_list = []
+    when_list = []
     alert_price_list = []
     frequency_list = []
     alert_status_list = []
@@ -50,6 +58,7 @@ def get_df(alerts):
             exchange_list.append(alert_info['exchange'])
             pair_list.append(pair)
             alert_price_list.append(alert_info['alert_price'])
+            when_list.append(alert_info['when'])
             if alert_info['always']:
                 frequency = 'always'
             else:
@@ -58,12 +67,23 @@ def get_df(alerts):
             alert_status_list.append(alert_info['alert_status'])
     
     df = pd.DataFrame({"Exchange":exchange_list, "Pairs": pair_list, 
-                       "Alert Price": alert_price_list,
+                       "Alert Price": alert_price_list, "When": when_list,
                        "Frequency": frequency_list, "Alert": alert_status_list})
     return df
+    
 
+def check_price(exchange, alerts):
+    previous_alerts = alerts
+    while True:
+        time.sleep(5)
+        alerts = exchange.get_alerts(alerts)
         
-def main():
+        if (alerts != previous_alerts):
+            return alerts
+            
+        
+        
+def main_ui():
     save_dir = '../cfg/'
     if not os.path.exists(save_dir):
         os.makedirs(save_dir)
@@ -80,8 +100,8 @@ def main():
     
     st.title("Cryptocurrency Price Alerts")
     
-    exchange_list = get_exchanges()
-    
+#    exchange_list = get_exchanges()
+    exchange_list = ["binance"]
     exchange_id = st.sidebar.selectbox("Choose an Exchange", exchange_list, index=exchange_list.index('binance'))
     exchange = ExchangeClass(exchange_id)
     symbols = exchange.get_symbols()
@@ -89,8 +109,10 @@ def main():
     pair = st.sidebar.selectbox("Choose a Pair", symbols, index=symbols.index('BTC/USDT'))
 
     current_price = exchange.get_current_price(pair)   
-
-    alert_price, when, always, add_alert_button = get_alert_params(pair, current_price)
+    
+    st.sidebar.write(f"Current Price for {pair} : {current_price}")
+    
+    alert_price, when, always, add_alert_button = get_alert_params(pair)
     
     if add_alert_button:
         alerts = create_alerts(exchange_id, pair, alert_price, when, always, alerts)
@@ -100,7 +122,6 @@ def main():
             json.dump(alerts, outfile)
 
     st.table(df)
-        
 
     
     st.markdown('''<html lang="en">
@@ -111,8 +132,13 @@ def main():
 	</div>
 </body>
 </html>''', unsafe_allow_html=True)
-
+    
+    
+#    time.sleep(10)
+#    st.experimental_rerun()
+    
+    
 if __name__ == '__main__':
-    main()
+    main_ui()
 
 

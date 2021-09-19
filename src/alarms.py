@@ -40,9 +40,7 @@ class ExchangeClass:
             current_price = self.get_current_price(pair)
             index = 0
             for i, alert_info in enumerate(alerts_info):
-                if alert_info['alert_status'] and not alert_info['always']:
-                    alerts[pair].remove(alert_info)
-                else:
+                if (not alert_info['alert_status']) or (alert_info['alert_status'] and alert_info['always']):
                     if alert_info['when'] == 'above': 
                         if current_price > alert_info['alert_price']:
                             alert_status = True
@@ -55,7 +53,7 @@ class ExchangeClass:
                             alert_status = False
                      
                     alerts[pair][index]['alert_status'] = alert_status
-                    index += 1
+                index += 1
                
         return alerts
             
