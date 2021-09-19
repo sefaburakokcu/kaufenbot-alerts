@@ -2,24 +2,24 @@
 
   Generate alarms for price above/below a certain price for a cryptocurrency
  
-##Contents
+## Contents
 
 - [Introduction](#introduction)
 - [Requirements](#requirements)
 - [Installation](#installation)
 - [Usage](#usage)
 
-##Introduction
+## Introduction
 
   This repo is designed for generating alarms for cryptocurrincies using [ccxt](https://github.com/ccxt/ccxt).
   
-##Requirements
+## Requirements
 
 * ccxt >= 1.56.59
 * pandas >= 1.3.3
 * streamlit >= 0.88.0
 
-##Installation
+## Installation
 
 ```bash
 git clone git@github.com:sefaburakokcu/kaufenbot-alarms.git
@@ -28,7 +28,7 @@ git clone git@github.com:sefaburakokcu/kaufenbot-alarms.git
 pip install -r requirements.txt
 ```
 
-##Usage
+## Usage
 
 Under __src__ folder,
 
