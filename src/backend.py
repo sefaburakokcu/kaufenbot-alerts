@@ -5,10 +5,11 @@ import copy
 
 from alarms import ExchangeClass
 
+DELAY = 60
 
 def check_alert_status(file_name="../cfg/alerts.json"):
     while not os.path.exists(file_name):
-        time.sleep(5)
+        time.sleep(DELAY)
 
     
     exchange = ExchangeClass('binance')
@@ -20,7 +21,7 @@ def check_alert_status(file_name="../cfg/alerts.json"):
     previous_alerts = copy.deepcopy(alerts)
     
     while True:
-        time.sleep(5)
+        time.sleep(DELAY)
         alerts = exchange.get_alerts(alerts)
         if (alerts != previous_alerts):
             with open(file_name,'w') as outfile:
