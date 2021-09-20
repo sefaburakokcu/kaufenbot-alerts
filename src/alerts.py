@@ -59,8 +59,6 @@ class ExchangeClass:
         return alerts
             
 
-        
-    
     
 if __name__ == '__main__':
     exchange = ExchangeClass('binance')
