@@ -7,11 +7,11 @@ import pandas as pd
 
 import rerun
 
-from threading import Thread
-
 from backend import check_alert_status
-from alarms import ExchangeClass, get_exchanges
+from alerts import ExchangeClass, get_exchanges
 
+
+st.set_page_config(page_title='kaufenbot-alerts', page_icon = '../inputs/favicon.jpg', layout = 'wide', initial_sidebar_state = 'auto')
 
 
 def change_background(df):
@@ -39,6 +39,7 @@ def choose_pair(exchange):
     pair = st.sidebar.selectbox("Choose a Pair", symbols)
     return pair 
 
+
 def get_alert_params(pair):    
     with st.sidebar.form(key ='Form1'):
         alert_price =  st.number_input("Enter alert price:")
@@ -47,6 +48,7 @@ def get_alert_params(pair):
         add_alert_button = st.form_submit_button(label = f'Add alert for {pair}')
     
     return alert_price, when, always, add_alert_button
+
 
 def create_alerts(exchange_id, pair, alert_price, when, always, alerts=None):
     if alerts is None:
@@ -66,6 +68,7 @@ def create_alerts(exchange_id, pair, alert_price, when, always, alerts=None):
     else:
         alerts[pair] = [alert_info]
     return alerts
+
 
 def delete_alerts(alerts, save_file='../cfg/alerts.json'):
     alerts_output = {}
@@ -92,9 +95,8 @@ def delete_alerts(alerts, save_file='../cfg/alerts.json'):
         alerts_output = copy.deepcopy(alerts)
     with open(save_file, 'w') as outfile:
         json.dump(alerts_output, outfile)
-
-                                               
     return alerts_output
+
 
 def get_df(alerts):
     exchange_list = []
@@ -120,10 +122,10 @@ def get_df(alerts):
                        "Alert Price": alert_price_list, "When": when_list,
                        "Frequency": frequency_list, "Alert": alert_status_list})
     return df
-    
 
-        
-        
+
+
+
 def main_ui():
     save_dir = '../cfg/'
     if not os.path.exists(save_dir):
@@ -139,7 +141,7 @@ def main_ui():
     
     df = get_df(alerts)
     
-    st.title("Cryptocurrency Price Alerts")
+    st.title("Cryptocurrency Price Alerts by Kaufenbot")
     
 #    exchange_list = get_exchanges()
     exchange_list = ["binance"]
@@ -168,14 +170,17 @@ def main_ui():
     df = change_background(df)
     st.table(df)
 
-    
-    
+    hide_footer_style = """
+    <style>
+    .reportview-container .main footer {visibility: hidden;}    
+    """
+    st.markdown(hide_footer_style, unsafe_allow_html=True)    
     st.markdown('''<html lang="en">
 <body>
     
-  	<div>
+   	<div>
   		<p>Designed by <em><a href="https://github.com/sefaburakokcu/">Sefa Burak OKCU</a></em></p> 
-	</div>
+ 	</div>
 </body>
 </html>''', unsafe_allow_html=True)
     
