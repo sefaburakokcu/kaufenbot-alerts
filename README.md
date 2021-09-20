@@ -30,8 +30,11 @@ pip install -r requirements.txt
 
 ## Usage
 
-Under __src__ folder,
+Under __src__ folder, run commands below in parallel:
 
+```bash
+python backend.py
+```
 ```bash
 streamlit run ui.py
 ```
