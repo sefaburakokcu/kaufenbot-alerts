@@ -3,7 +3,7 @@ import time
 import json
 import copy
 
-from alarms import ExchangeClass
+from alerts import ExchangeClass
 
 DELAY = 60
 
