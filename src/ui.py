@@ -14,6 +14,26 @@ from alarms import ExchangeClass, get_exchanges
 
 
 
+def change_background(df):
+    
+    def highlight(row):
+        '''
+        highlight the maximum in a Series yellow.
+        '''
+        alerts = row['Alert']
+        when = row["When"]
+        if alerts == 1: 
+            if when == 'above':
+                css = 'background-color: green'
+            else:
+                css = 'background-color: red'
+        else:
+            css = 'background-color: white'
+        return [css] * len(row)
+
+    return df.style.apply(highlight, axis=1)
+
+
 def choose_pair(exchange):
     symbols = exchange.get_symbols()
     pair = st.sidebar.selectbox("Choose a Pair", symbols)
@@ -21,7 +41,7 @@ def choose_pair(exchange):
 
 def get_alert_params(pair):    
     with st.sidebar.form(key ='Form1'):
-        alert_price =  st.number_input(f"Enter alert price:")
+        alert_price =  st.number_input("Enter alert price:")
         when = st.selectbox("Show alarm when the price is:",['above', 'below'])
         always = st.checkbox('always')
         add_alert_button = st.form_submit_button(label = f'Add alert for {pair}')
@@ -145,6 +165,7 @@ def main_ui():
     
     df = get_df(alerts)
     
+    df = change_background(df)
     st.table(df)
 
     
