@@ -51,8 +51,9 @@ class ExchangeClass:
                             alert_status = True
                         else:
                             alert_status = False
-                     
-                    alerts[pair][index]['alert_status'] = alert_status
+                            
+                    if (not alert_info['alert_status']) or (not alert_status):
+                        alerts[pair][index]['alert_status'] = alert_status
                 index += 1
                
         return alerts
