@@ -1,5 +1,6 @@
 import os
 import time
+import copy
 import json
 import streamlit as st
 import pandas as pd
@@ -46,6 +47,35 @@ def create_alerts(exchange_id, pair, alert_price, when, always, alerts=None):
         alerts[pair] = [alert_info]
     return alerts
 
+def delete_alerts(alerts, save_file='../cfg/alerts.json'):
+    alerts_output = {}
+    with st.sidebar.form(key ='Form2'):
+        alert_index =  st.selectbox("Choose alert index which will be removed:", list(range(sum([len(x) for x in alerts.values()]))))
+        delete_all = st.checkbox('Delete All')
+        delete_alert_button = st.form_submit_button(label = 'Delete Selected Alerts')
+    
+    if delete_alert_button:
+        if not delete_all:
+            index = 0
+            
+            for pair, alerts_info in alerts.items():
+                for alert_info in alerts_info:
+                    
+                    if index != alert_index:
+                        if pair in alerts_output.keys():
+                            alerts_output[pair].append(alert_info)
+                        else:
+                            alerts_output[pair] = [alert_info]
+                    index += 1    
+                    print(alerts_output)                               
+    else:
+        alerts_output = copy.deepcopy(alerts)
+    with open(save_file, 'w') as outfile:
+        json.dump(alerts_output, outfile)
+
+                                               
+    return alerts_output
+
 def get_df(alerts):
     exchange_list = []
     pair_list = []
@@ -72,15 +102,6 @@ def get_df(alerts):
     return df
     
 
-def check_price(exchange, alerts):
-    previous_alerts = alerts
-    while True:
-        time.sleep(5)
-        alerts = exchange.get_alerts(alerts)
-        
-        if (alerts != previous_alerts):
-            return alerts
-            
         
         
 def main_ui():
@@ -117,12 +138,16 @@ def main_ui():
     if add_alert_button:
         alerts = create_alerts(exchange_id, pair, alert_price, when, always, alerts)
 
-        df = get_df(alerts)
         with open(f'{save_dir}alerts.json', 'w') as outfile:
             json.dump(alerts, outfile)
 
+    alerts = delete_alerts(alerts, save_file='../cfg/alerts.json')
+    
+    df = get_df(alerts)
+    
     st.table(df)
 
+    
     
     st.markdown('''<html lang="en">
 <body>
