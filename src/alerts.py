@@ -1,5 +1,5 @@
 import ccxt
-
+import time
 
 def get_exchanges():
     exchange_list = ccxt.exchanges
@@ -21,14 +21,22 @@ class ExchangeClass:
         self.initialize()
         
     def initialize(self):
-        self.exchange.load_markets()
+        try:
+           self.exchange.load_markets()
+        except ccxt.RequestTimeout as e:
+           time.sleep(2)
+           self.exchange.load_markets()
         
     def get_symbols(self):
         symbols = self.exchange.symbols
         return symbols 
     
     def get_current_price(self, pair='BTC/USDT'):
-        ticker = self.exchange.fetch_ticker(pair)
+        try:
+           ticker = self.exchange.fetch_ticker(pair)
+        except ccxt.RequestTimeout as e:
+           time.sleep(2)
+           ticker = self.exchange.fetch_ticker(pair)
         current_price = (float(ticker['ask']) + float(ticker['bid'])) / 2
         return current_price
     
