@@ -36,6 +36,9 @@ Under __src__ folder, run commands below in parallel:
 python backend.py
 ```
 ```bash
+python sound.py
+```
+```bash
 streamlit run ui.py
 ```
 
