@@ -11,7 +11,7 @@ from backend import check_alert_status
 from alerts import ExchangeClass, get_exchanges
 
 
-st.set_page_config(page_title='kaufenbot-alerts', page_icon = '../inputs/favicon.jpg', layout = 'wide', initial_sidebar_state = 'auto')
+st.set_page_config(page_title='kaufenbot-alerts', page_icon = '../inputs/images/favicon.jpg', layout = 'wide', initial_sidebar_state = 'auto')
 
 
 def change_background(df):
