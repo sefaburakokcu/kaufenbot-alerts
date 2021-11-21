@@ -28,7 +28,7 @@ def change_background(df):
             else:
                 css = 'background-color: red'
         else:
-            css = 'background-color: white'
+            css = 'background-color: black'
         return [css] * len(row)
 
     return df.style.apply(highlight, axis=1)
@@ -42,8 +42,8 @@ def choose_pair(exchange):
 
 def get_alert_params(pair):    
     with st.sidebar.form(key ='Form1'):
-        alert_price =  st.number_input("Enter alert price:")
-        when = st.selectbox("Show alarm when the price is:",['above', 'below'])
+        alert_price =  st.number_input("Enter alert price:", step=1e-6,format="%.5f")
+        when = st.selectbox("Show alert when the price is:",['above', 'below'])
         always = st.checkbox('always')
         add_alert_button = st.form_submit_button(label = f'Add alert for {pair}')
     
@@ -164,6 +164,28 @@ def main_ui():
             json.dump(alerts, outfile)
 
     alerts = delete_alerts(alerts, save_file='../cfg/alerts.json')
+    
+    sound_button = st.sidebar.checkbox("Sound On", True)
+
+    sound_cfg = '../cfg/sound.json'
+    if sound_button:
+        with open(sound_cfg) as json_file:
+            alert_info = json.load(json_file)
+        
+        alert_sound = alert_info["alert_sound"]
+        if not alert_sound:
+            info = {"alert_sound":True}
+            with open(sound_cfg,'w') as outfile:
+                json.dump(info, outfile)
+    else:
+        with open(sound_cfg) as json_file:
+            alert_info = json.load(json_file)
+        
+        alert_sound = alert_info["alert_sound"]
+        if alert_sound:
+            info = {"alert_sound":False}
+            with open(sound_cfg,'w') as outfile:
+                json.dump(info, outfile)
     
     df = get_df(alerts)
     
