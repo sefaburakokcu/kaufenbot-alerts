@@ -2,7 +2,7 @@
 
   Generate alerts for price above/below a certain price for a cryptocurrency
   
-[Web UI](/inputs/images/ui_ss.png)
+![Web UI](/inputs/images/ui_ss.png)
  
 ## Contents
 
