@@ -1,6 +1,8 @@
 # Kaufenbot Alarm System
 
-  Generate alarms for price above/below a certain price for a cryptocurrency
+  Generate alerts for price above/below a certain price for a cryptocurrency
+  
+[Web UI](/inputs/images/ui_ss.png)
  
 ## Contents
 
